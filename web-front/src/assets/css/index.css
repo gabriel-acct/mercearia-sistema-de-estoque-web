@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  /* Tabela de cores - Mercearia */
+  --color-branco: #FFFFFF;
+  --color-branco-fumaca: #F5F5F5;
+  --color-preto: #000000;
+  --color-preto-suave: #1A1A1A;
+  --color-preto-azulado: #0F172A;
+  --color-azul: #2563EB;
+  --color-azul-escuro: #1D4ED8;
+  --color-azul-claro: #3B82F6;
+  --color-azul-suave: #EFF6FF;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.animate-slide-in { animation: slide-in-right 0.3s ease-out; }

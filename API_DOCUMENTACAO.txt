@@ -1,0 +1,277 @@
+================================================================================
+  API - DOCUMENTAÇÃO DE RESPOSTAS
+  Sistema Mercearia - Frontend espera os seguintes formatos
+================================================================================
+
+Base URL: http://127.0.0.1:5000
+
+Todas as requisições (exceto /auth, /users) devem enviar:
+  Header: Authorization: Bearer <token>
+
+--------------------------------------------------------------------------------
+1. POST /auth
+   Body: { "username": "string", "password": "string" }
+
+   Retorno esperado (sucesso):
+   {
+     "status": true,
+     "message": "Login successful",
+     "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+   }
+
+   Retorno esperado (erro):
+   {
+     "status": false,
+     "message": "Senha ou usuário incorretos"
+   }
+
+--------------------------------------------------------------------------------
+2. GET /users
+   (Usado na tela de login para listar usuários - pode ser público)
+
+   Retorno esperado:
+   {
+     "status": true,
+     "message": "OK",
+     "users": [
+       { "id": 1, "nome": "joao" },
+       { "id": 2, "nome": "maria" }
+     ]
+   }
+
+--------------------------------------------------------------------------------
+3. GET /protected
+   (Verifica token e retorna dados do usuário logado)
+
+   Retorno esperado:
+   {
+     "status": true,
+     "message": "Token valido",
+     "user_id": "1",
+     "user_info": {
+       "id": 1,
+       "nome": "joao",
+       "cargo_id": 3,
+       "cargo_nome": "caixa",
+       "areas_ids": [1, 2, 4]
+     }
+   }
+
+   areas_ids = array de IDs das áreas que o usuário pode acessar
+   (1=PDV, 2=Estoque, 3=Funcionários, 4=Relatórios, 5=Configurações)
+
+--------------------------------------------------------------------------------
+4. GET /produtos
+   (Lista todos os produtos)
+
+   Retorno esperado:
+   {
+     "status": true,
+     "produtos": [
+       {
+         "id": 1,
+         "name_produto": "Arroz 5kg",
+         "preco": 24.90,
+         "quantidade": 50,
+         "ref": "REF001",
+         "ref2": null,
+         "codigo": "001"
+       }
+     ]
+   }
+
+--------------------------------------------------------------------------------
+5. POST /produtos/buscar
+   Body: { "termo": "001" }  ou  { "termo": "arroz" }
+
+   Retorno esperado (encontrado):
+   {
+     "status": true,
+     "produto": {
+       "id": 1,
+       "name_produto": "Arroz 5kg",
+       "preco": 24.90,
+       "quantidade": 50,
+       "ref": "REF001",
+       "ref2": null,
+       "codigo": "001"
+     }
+   }
+
+   Retorno esperado (não encontrado): 404
+   { "status": false, "message": "Produto não encontrado" }
+
+--------------------------------------------------------------------------------
+6. POST /produtos
+   Body: {
+     "name_produto": "string",
+     "preco": number,
+     "quantidade": number,
+     "codigo": "string",
+     "ref": "string ou null",
+     "ref2": "string ou null"
+   }
+
+   Retorno esperado:
+   { "status": true, "message": "Produto criado", "id": 1 }
+
+--------------------------------------------------------------------------------
+7. PUT /produtos/:id
+   Body: mesmo formato do POST /produtos
+
+   Retorno esperado:
+   { "status": true, "message": "Produto atualizado" }
+
+--------------------------------------------------------------------------------
+8. DELETE /produtos/:id
+
+   Retorno esperado:
+   { "status": true, "message": "Produto excluído" }
+
+--------------------------------------------------------------------------------
+9. GET /funcionarios
+   (Lista funcionários/usuários)
+
+   Retorno esperado:
+   {
+     "status": true,
+     "funcionarios": [
+       {
+         "id": 1,
+         "usuario": "joao",
+         "cargo_id": 3,
+         "cargo_nome": "caixa"
+       }
+     ]
+   }
+   ou:  { "users": [...] }
+
+--------------------------------------------------------------------------------
+10. POST /funcionarios
+    Body: {
+      "usuario": "string",
+      "senha": "string",
+      "cargo_id": number
+    }
+
+    Retorno esperado:
+    { "status": true, "message": "Funcionário criado", "id": 1 }
+
+--------------------------------------------------------------------------------
+11. PUT /funcionarios/:id
+    Body: {
+      "usuario": "string",
+      "senha": "string ou omitir para manter",
+      "cargo_id": number
+    }
+
+    Retorno esperado:
+    { "status": true, "message": "Funcionário atualizado" }
+
+--------------------------------------------------------------------------------
+12. DELETE /funcionarios/:id
+
+    Retorno esperado:
+    { "status": true, "message": "Funcionário excluído" }
+
+--------------------------------------------------------------------------------
+13. GET /vendas/relatorio?periodo=semana|mes|ano
+
+    Retorno esperado:
+    {
+      "vendas": [
+        {
+          "id": 1,
+          "total": 150.50,
+          "quantidade_itens": 5,
+          "criado_em": "2025-02-16T10:00:00",
+          "data": "2025-02-16"
+        }
+      ],
+      "total": 150.50,
+      "quantidade": 1
+    }
+
+--------------------------------------------------------------------------------
+14. GET /cargos
+    (Lista cargos para configurações)
+
+    Retorno esperado:
+    {
+      "status": true,
+      "cargos": [
+        { "id": 1, "nome": "admin", "descricao": "Acesso total" },
+        { "id": 2, "nome": "gerente", "descricao": "..." }
+      ]
+    }
+
+--------------------------------------------------------------------------------
+15. POST /cargos
+    Body: { "nome": "string", "descricao": "string" }
+
+    Retorno esperado:
+    { "status": true, "message": "Cargo criado", "id": 5 }
+
+--------------------------------------------------------------------------------
+16. PUT /cargos/:id
+    Body: { "nome": "string", "descricao": "string" }
+
+    Retorno esperado:
+    { "status": true, "message": "Cargo atualizado" }
+
+--------------------------------------------------------------------------------
+17. DELETE /cargos/:id
+
+    Retorno esperado:
+    { "status": true, "message": "Cargo excluído" }
+
+--------------------------------------------------------------------------------
+18. GET /areas
+    (Lista áreas do sistema)
+
+    Retorno esperado:
+    {
+      "status": true,
+      "areas": [
+        { "id": 1, "nome": "PDV", "descricao": "Ponto de venda" },
+        { "id": 2, "nome": "Área de Estoque", "descricao": "..." }
+      ]
+    }
+
+--------------------------------------------------------------------------------
+19. GET /cargos/:id/areas
+    (Áreas que um cargo pode acessar)
+
+    Retorno esperado:
+    {
+      "status": true,
+      "areas_ids": [1, 2, 4]
+    }
+
+--------------------------------------------------------------------------------
+20. PUT /cargos/:id/areas
+    Body: { "areas_ids": [1, 2, 4] }
+
+    (Define quais áreas o cargo pode acessar)
+
+    Retorno esperado:
+    { "status": true, "message": "Permissões atualizadas" }
+
+--------------------------------------------------------------------------------
+21. PUT /funcionarios/:id/cargo
+    Body: { "cargo_id": number }
+
+    (Atribui cargo a um funcionário)
+
+    Retorno esperado:
+    { "status": true, "message": "Cargo atribuído" }
+
+--------------------------------------------------------------------------------
+MAPEAMENTO DE ÁREAS (area_id):
+  1 = PDV
+  2 = Estoque
+  3 = Funcionários
+  4 = Relatórios
+  5 = Configurações
+
+--------------------------------------------------------------------------------
